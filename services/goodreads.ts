@@ -1,5 +1,5 @@
-import { parseFeed } from "https://deno.land/x/rss/mod.ts";
-import { toGoodReads } from "../models/goodreads.ts";
+import { parseFeed } from "https://deno.land/x/rss@0.5.3/mod.ts";
+
 interface Value {
   value: string;
 }
@@ -8,7 +8,7 @@ interface Link {
   href: string;
 }
 
-interface GoodReadsFeedEntry {
+export interface GoodReadsFeedEntry {
   book_id: Value;
   book_image_url: Value;
   book_small_image_url: Value;
@@ -35,16 +35,9 @@ interface GoodReadsFeedEntry {
   links: Link[];
 }
 
-export async function getItemsFromFeed(
-  url: string,
-  options?: {
-    limit?: number;
-    unfiltered?: boolean;
-  },
-) {
+export async function getItemsFromFeed(url: string) {
   const response = await fetch(url);
   const xml = await response.text();
   const feed = await parseFeed(xml);
-  const entries = feed.entries as unknown as GoodReadsFeedEntry[];
-  return entries.map(toGoodReads);
+  return feed.entries as unknown as GoodReadsFeedEntry[];
 }
