@@ -1,7 +1,7 @@
-import { toRecord } from "../models/mappers.ts";
+import { toBook } from "../models/mappers.ts";
 import { GoodReadsFeedEntry } from "../models/goodreads.ts";
 
-export interface Record {
+export interface BookRecord {
   title: string;
   imageUrl: string;
   description: string;
@@ -11,11 +11,13 @@ export interface Record {
   price?: number;
   created?: number;
   processOn?: number;
+  storeUrl?: string;
 }
-export class SearchRecord implements Record {
+export class Book implements BookRecord {
   created?: number;
   processOn?: number;
   price?: number;
+  storeUrl?: string;
 
   constructor(
     public isbn: string,
@@ -29,11 +31,12 @@ export class SearchRecord implements Record {
   }
 
   static fromGoodReadsFeedEntry(entry: GoodReadsFeedEntry) {
-    return toRecord(entry);
+    return toBook(entry);
   }
 
-  updateStoreValues(price: number) {
+  updateStoreValues(price: number, storeUrl: string) {
     this.price = price;
+    this.storeUrl = storeUrl;
     this.processOn = Date.now();
   }
 }

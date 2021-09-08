@@ -3,8 +3,7 @@ import chalkin from "https://deno.land/x/chalkin/mod.ts";
 import "https://deno.land/x/dotenv@v3.0.0/load.ts";
 
 import { getItemsFromFeed } from "./services/goodreads.ts";
-import { toRecord } from "./models/mappers.ts";
-
+import { Book } from "./models/book.ts";
 const getFeedUrl = (url?: string) => {
   const feedUrl = url ?? Deno.env.get("GOODREADS_FEED");
   if (feedUrl) {
@@ -30,7 +29,7 @@ program
   .action(async () => {
     const feedUrl = getFeedUrl(program.url);
     const items = await getItemsFromFeed(feedUrl);
-    console.log(items.map(toRecord));
+    console.log(items.map(Book.fromGoodReadsFeedEntry));
     // const records = items.map(toRecord);
     // console.log(records[0]);
     //     const items = options.fetch

@@ -32,15 +32,3 @@ export interface GoodReadsFeedEntry {
   updatedRaw: string;
   links: Link[];
 }
-
-export interface GoodReads {
-  title: string;
-  imageUrl: string;
-  smallImageUrl: string;
-  mediumImageUrl: string;
-  largeImageUrl: string;
-  description: string;
-  isbn: string;
-  published: string;
-  url: string;
-}
