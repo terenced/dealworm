@@ -16,12 +16,12 @@ const getImageUrl = (
 );
 
 export function toBook(entry: GoodReadsFeedEntry): Book {
-  return new Book(
-    entry?.isbn?.value || "",
-    stripHtml(entry?.book_description?.value || "")?.result,
-    getImageUrl(entry),
-    entry?.published || "",
-    entry?.title?.value,
-    getGoodReadsUrlFromDescription(entry?.description?.value) || "",
-  );
+  return {
+    isbn: entry?.isbn?.value || "",
+    description: stripHtml(entry?.book_description?.value || "")?.result,
+    imageUrl: getImageUrl(entry),
+    published: entry?.published || "",
+    title: entry?.title?.value,
+    url: getGoodReadsUrlFromDescription(entry?.description?.value) || "",
+  };
 }

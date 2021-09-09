@@ -1,16 +1,20 @@
 import Denomander from "https://deno.land/x/denomander@0.9.0/mod.ts";
 import chalkin from "https://deno.land/x/chalkin@v0.1.3/mod.ts";
+import { badge } from "https://deno.land/x/cli_badges@v0.1.1/mod.ts";
+
 import "https://deno.land/x/dotenv@v3.0.0/load.ts";
 
+import { toBook } from "./models/mappers.ts";
 import { getItemsFromFeed } from "./services/goodreads.ts";
-import { Book, BookRecord } from "./models/book.ts";
 import {
   allBooks,
   booksToPrice,
   getStore,
   pricedBooks,
+  Record,
 } from "./services/store.ts";
 import { findByISBN } from "./services/amazon.ts";
+import { printRecords } from "./utils/printer.ts";
 
 const getFeedUrl = (url?: string) => {
   const feedUrl = url ?? Deno.env.get("GOODREADS_FEED");
@@ -31,32 +35,39 @@ const program = new Denomander({
 
 program
   .command("sync [url?]")
-  .option("-m, --missing", "Print books missing ISBNs")
+  .option("-f, --failed", "Print books failed books due to missing ISBNs")
   .action(async () => {
     const feedUrl = getFeedUrl(program.url);
     const items = await getItemsFromFeed(feedUrl);
-    const books = items.map(Book.fromGoodReadsFeedEntry);
-    const store = await getStore();
+    const books = items.map(toBook);
+    const store = getStore();
+
     let added = 0;
+    let failed = 0;
     let skipped = 0;
-    books.splice(0, 5).forEach((book) => {
+    books.forEach((book) => {
       if (book.isbn) {
-        store.set(book.isbn, book);
-        added++;
+        if (store.get(book.isbn)) {
+          skipped++;
+        } else {
+          store.set(book.isbn, book);
+          added++;
+        }
       } else {
-        skipped++;
-        if (program.missing) {
+        failed++;
+        if (program.failed) {
           console.error(
-            chalkin.red("Missing ISBN"),
+            chalkin.red("No ISBN"),
             chalkin.bold(book.title),
             chalkin.dim(book.url),
           );
         }
       }
     });
-    console.log("Added", added);
-    console.log("Skipped", skipped);
-    await store.save();
+    console.log(chalkin.bold.green("Added"), added);
+    console.log(chalkin.bold.green("Skipped"), skipped);
+    console.log(chalkin.bold.green("Failed"), failed);
+    store.save();
   });
 
 program
@@ -65,43 +76,27 @@ program
   .option("-p, --prices", "All items with price")
   .option("-m, --missing", "All items missing prices")
   .action(async () => {
-    let items: BookRecord[];
+    let items: Record[];
     if (program.missing) {
-      items = booksToPrice();
+      printRecords(booksToPrice());
     } else if (program.prices) {
-      items = pricedBooks();
+      printRecords(pricedBooks());
     } else {
       items = allBooks();
+      console.log(items);
     }
-    console.log(items);
   });
 
 program
   .command("price")
   .action(async () => {
     const store = getStore();
-    for (const [isbn, book] of store.entries()) {
-      console.log(isbn, book.title);
-      // const am = await findByISBN(isbn);
-      // store.set(isbn, { ...book, ...am });
+    const books = booksToPrice(store);
+    for (const book of books.splice(0, 3)) {
+      console.log(book.isbn, book.title);
+      const am = await findByISBN(book.isbn);
+      store.set(book.isbn, { ...book, ...am });
     }
-    await store.save();
+    store.save();
   });
-// program
-//   .command("feed [url?]")
-//   .option("-f, --fetch", "fetch price")
-//   .option("-u, --unfiltered", "Do not filter items with ISBNs")
-//   .option("-l, --limit", "fetch price", parseInt, 5)
-//   .action(async () => {
-//     const feedUrl = getFeedUrl(program.url);
-//     const items = await getItemsFromFeed(feedUrl);
-//     console.log(items.map(Book.fromGoodReadsFeedEntry));
-//     // const records = items.map(toRecord);
-//     // console.log(records[0]);
-//     //     const items = options.fetch
-//     //       ? await fetchPricesForFeed(feedUrl, options.limit)
-//     //       : await getItemsFromFeed(feedUrl, options);
-//     //
-//     //     printItems(items);
-//   });
 program.parse(Deno.args);
