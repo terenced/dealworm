@@ -1,6 +1,6 @@
 import Denomander from "https://deno.land/x/denomander@0.9.0/mod.ts";
 import chalkin from "https://deno.land/x/chalkin@v0.1.3/mod.ts";
-import { badge } from "https://deno.land/x/cli_badges@v0.1.1/mod.ts";
+import * as Fae from "https://deno.land/x/fae@v0.6.2/mod.ts";
 
 import "https://deno.land/x/dotenv@v3.0.0/load.ts";
 
@@ -11,7 +11,6 @@ import {
   booksToPrice,
   getStore,
   pricedBooks,
-  Record,
 } from "./services/store.ts";
 import { findByISBN } from "./services/amazon.ts";
 import { printRecords } from "./utils/printer.ts";
@@ -76,23 +75,22 @@ program
   .option("-p, --prices", "All items with price")
   .option("-m, --missing", "All items missing prices")
   .action(async () => {
-    let items: Record[];
     if (program.missing) {
       printRecords(booksToPrice());
     } else if (program.prices) {
       printRecords(pricedBooks());
     } else {
-      items = allBooks();
-      console.log(items);
+      printRecords(allBooks());
     }
   });
 
 program
   .command("price")
+  .option("-l, --limit", "Limit to process")
   .action(async () => {
     const store = getStore();
-    const books = booksToPrice(store);
-    for (const book of books.splice(0, 3)) {
+    const books = Fae.take(program.limit, booksToPrice(store));
+    for (const book of books) {
       console.log(book.isbn, book.title);
       const am = await findByISBN(book.isbn);
       store.set(book.isbn, { ...book, ...am });
