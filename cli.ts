@@ -8,9 +8,10 @@ import { toBook } from "./models/mappers.ts";
 import { getItemsFromFeed } from "./services/goodreads.ts";
 import {
   allBooks,
-  booksToPrice,
   getStore,
   pricedBooks,
+  StoreRecord,
+  unpricedBooks,
 } from "./services/store.ts";
 import { findByISBN } from "./services/amazon.ts";
 import { printRecords } from "./utils/printer.ts";
@@ -46,10 +47,10 @@ program
     let skipped = 0;
     books.forEach((book) => {
       if (book.isbn) {
-        if (store.get(book.isbn)) {
+        if (store.has(book.isbn)) {
           skipped++;
         } else {
-          store.set(book.isbn, book);
+          store.add(book.isbn, book);
           added++;
         }
       } else {
@@ -63,10 +64,10 @@ program
         }
       }
     });
+    store.save();
     console.log(chalkin.bold.green("Added"), added);
     console.log(chalkin.bold.green("Skipped"), skipped);
     console.log(chalkin.bold.green("Failed"), failed);
-    store.save();
   });
 
 program
@@ -75,12 +76,13 @@ program
   .option("-p, --prices", "All items with price")
   .option("-m, --missing", "All items missing prices")
   .action(async () => {
+    const store = getStore();
     if (program.missing) {
-      printRecords(booksToPrice());
+      printRecords(unpricedBooks(store));
     } else if (program.prices) {
-      printRecords(pricedBooks());
+      printRecords(pricedBooks(store));
     } else {
-      printRecords(allBooks());
+      printRecords(allBooks(store));
     }
   });
 
@@ -89,11 +91,12 @@ program
   .option("-l, --limit", "Limit to process")
   .action(async () => {
     const store = getStore();
-    const books = Fae.take(program.limit, booksToPrice(store));
+    const books = Fae.take(program.limit ?? 3, unpricedBooks(store));
     for (const book of books) {
       console.log(book.isbn, book.title);
       const am = await findByISBN(book.isbn);
-      store.set(book.isbn, { ...book, ...am });
+      const priced = { ...book, ...am } as StoreRecord;
+      store.override(book.isbn, priced);
     }
     store.save();
   });

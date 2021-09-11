@@ -7,15 +7,15 @@ import {
 import chalkin from "https://deno.land/x/chalkin@v0.1.3/mod.ts";
 import formatDistanceToNow from "https://deno.land/x/date_fns@v2.22.1/formatDistanceToNow/index.js";
 
-import { Record } from "../services/store.ts";
+import { StoreRecord } from "../services/store.ts";
 
-const formatUrls = (record: Record) => {
+const formatUrls = (record: StoreRecord) => {
   return [record.url, record.storeUrl].map((url) => chalkin.dim(url)).join(
     "\n",
   );
 };
 
-const formatPrice = (record: Record) => {
+const formatPrice = (record: StoreRecord) => {
   if (!record?.price) {
     return "⁇";
   }
@@ -37,7 +37,7 @@ const formatUpdated = (updated?: number) =>
     )
     : "";
 
-export function printRecords(records: Record[]) {
+export function printRecords(records: StoreRecord[]) {
   const body = records.map(
     (
       b,

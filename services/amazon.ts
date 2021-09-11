@@ -8,7 +8,7 @@ const BASE_URL = "https://www.amazon.ca";
 
 export const buildSearchResult = (item: Partial<SearchResult>) => {
   try {
-    const price = parse(item.priceStr || "").amount;
+    const price = parse(item.priceStr || "0").amount;
     const onSale = price > 0 && price <= 3.99;
     return {
       ...item,
@@ -18,7 +18,6 @@ export const buildSearchResult = (item: Partial<SearchResult>) => {
       storeUrl: `${BASE_URL}${item.storeUrl}`,
     };
   } catch (error) {
-    console.log(item);
     console.error(error);
     return undefined;
   }
@@ -68,7 +67,6 @@ export async function findByISBN(isbn: string) {
       })
     ).map(buildSearchResult).filter((p) => p);
 
-    console.log(products);
     await page.close();
     await browser.close();
 
