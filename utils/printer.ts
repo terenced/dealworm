@@ -1,23 +1,23 @@
-import {
-  ICell,
-  IRow,
-  Table,
-} from "https://deno.land/x/cliffy@v0.19.5/table/mod.ts";
+import { ICell, IRow, Table } from "../deps/table.ts";
 
-import chalkin from "https://deno.land/x/chalkin@v0.1.3/mod.ts";
-import formatDistanceToNow from "https://deno.land/x/date_fns@v2.22.1/formatDistanceToNow/index.js";
+import { chalkin } from "../deps/chalkin.ts";
+import { formatDistanceToNow } from "../deps/date_fns.ts";
 
 import { StoreRecord } from "../services/store.ts";
 
 const formatUrls = (record: StoreRecord) => {
-  return [record.url, record.storeUrl].map((url) => chalkin.dim(url)).join(
-    "\n",
-  );
+  if (record.url && record.storeUrl) {
+    return [record.url, record.storeUrl].map((url) => chalkin.cyan.dim(url))
+      .join(
+        "\n",
+      );
+  }
+  return chalkin.cyan.dim(record.url ?? record.storeUrl);
 };
 
 const formatPrice = (record: StoreRecord) => {
   if (!record?.price) {
-    return "⁇";
+    return "";
   }
   const priceStr = record.price.toLocaleString("en-CA", {
     style: "currency",
@@ -27,12 +27,12 @@ const formatPrice = (record: StoreRecord) => {
   if (record.onSale) {
     return `${chalkin.bold.green(priceStr)}`;
   }
-  return priceStr;
+  return chalkin.yellow.dim(priceStr);
 };
 
 const formatUpdated = (updated?: number) =>
   updated
-    ? chalkin.italic(
+    ? chalkin.white.italic(
       formatDistanceToNow(new Date(updated), { addSuffix: true }),
     )
     : "";
@@ -44,11 +44,10 @@ export function printRecords(records: StoreRecord[]) {
     ) => ([
       formatPrice(b),
       chalkin.dim(b.isbn),
-      b.title,
+      chalkin.magenta(b.title),
       formatUpdated(b.updated),
       formatUrls(b),
     ] as IRow<ICell>),
   );
-  console.log();
-  new Table().body(body).render();
+  new Table().body(body).border(true).render();
 }

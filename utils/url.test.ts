@@ -6,7 +6,11 @@ import {
   run,
 } from "https://deno.land/x/tincan/mod.ts";
 
-import { getGoodReadsUrlFromDescription, getUrls } from "./url.ts";
+import {
+  getGoodReadsUrlFromDescription,
+  getUrls,
+  sanitizeUrlString,
+} from "./url.ts";
 
 describe("getUrls", () => {
   it("should return urls", async () => {
@@ -30,6 +34,18 @@ describe("getGoodReadsUrlFromDescription ", () => {
     expect(url).toBe(
       "https://www.goodreads.com/book/show/55188449-the-desert-prince",
     );
+  });
+});
+
+describe("sanitizeUrlString", () => {
+  it("should clean things up", () => {
+    const result = sanitizeUrlString(
+      "https://www.example.com/foo/bar?shity_param=1&other_param=2",
+    );
+    expect(result).toBe("https://www.example.com/foo/bar");
+  });
+  it("handle undefined", () => {
+    expect(sanitizeUrlString(undefined)).toBe("");
   });
 });
 

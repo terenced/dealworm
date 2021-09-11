@@ -1,6 +1,6 @@
-import Denomander from "https://deno.land/x/denomander@0.9.0/mod.ts";
-import chalkin from "https://deno.land/x/chalkin@v0.1.3/mod.ts";
-import * as Fae from "https://deno.land/x/fae@v0.6.2/mod.ts";
+import { Denomander } from "./deps/denomander.ts";
+import { chalkin } from "./deps/chalkin.ts";
+import * as Fae from "./deps/fae.ts";
 
 import "https://deno.land/x/dotenv@v3.0.0/load.ts";
 
@@ -28,8 +28,8 @@ const getFeedUrl = (url?: string) => {
 };
 
 const program = new Denomander({
-  app_name: "Blagh Jeade",
-  app_description: "Blagh Jeade: Book finder in Old Tongue",
+  app_name: "dealworm",
+  app_description: "Find books on sale",
   app_version: "1.0.0",
 });
 
@@ -72,18 +72,23 @@ program
 
 program
   .command("list")
-  .option("-a, --all", "All Items in store")
   .option("-p, --prices", "All items with price")
   .option("-m, --missing", "All items missing prices")
+  .option("-l, --limit", "Limit to process")
   .action(async () => {
     const store = getStore();
+    let items: StoreRecord[];
     if (program.missing) {
-      printRecords(unpricedBooks(store));
+      items = unpricedBooks(store);
     } else if (program.prices) {
-      printRecords(pricedBooks(store));
+      items = pricedBooks(store);
     } else {
-      printRecords(allBooks(store));
+      items = allBooks(store);
     }
+    if (program.limit) {
+      items = Fae.take(program.limit, items);
+    }
+    printRecords(items);
   });
 
 program
@@ -100,4 +105,6 @@ program
     }
     store.save();
   });
+
+program.command("destory").action(() => getStore().destory());
 program.parse(Deno.args);

@@ -1,3 +1,4 @@
+import * as Fae from "../deps/fae.ts";
 export const URL_REGEX =
   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/g;
 
@@ -20,3 +21,5 @@ export const urlFromString = (url: string | undefined) => {
 
 export const sanitizeUrl = (url: URL | undefined) =>
   url ? `${url.origin}${url.pathname}` : "";
+
+export const sanitizeUrlString = Fae.pipe(urlFromString, sanitizeUrl);

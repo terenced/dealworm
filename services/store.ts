@@ -69,6 +69,10 @@ export class Store<T> {
   save() {
     return Deno.writeTextFile(this.path, JSON.stringify(this.data));
   }
+
+  destory() {
+    return Deno.removeSync(this.path);
+  }
 }
 
 export function getStore(persisted = true) {

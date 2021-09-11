@@ -1,4 +1,4 @@
-import { stripHtml } from "http://esm.sh/string-strip-html";
+import { stripHtml } from "../deps/stripHtml.ts";
 import { getGoodReadsUrlFromDescription } from "../utils/url.ts";
 import { GoodReadsFeedEntry } from "./goodreads.ts";
 import { Book } from "./book.ts";
