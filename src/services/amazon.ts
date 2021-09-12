@@ -7,20 +7,15 @@ const RESULT_SECTION_SELECTOR = "span[class*=SEARCH_RESULTS]";
 const BASE_URL = "https://www.amazon.ca";
 
 export const buildSearchResult = (item: Partial<SearchResult>) => {
-  try {
-    const price = parse(item.priceStr || "0").amount;
-    const onSale = price > 0 && price <= 3.99;
-    return {
-      ...item,
-      price,
-      onSale,
-      updated: Date.now(),
-      storeUrl: sanitizeUrlString(`${BASE_URL}${item.storeUrl}`),
-    };
-  } catch (error) {
-    console.error(error);
-    return undefined;
-  }
+  const price = parse(item.priceStr || "0").amount;
+  const onSale = price > 0 && price <= 3.99;
+  return {
+    ...item,
+    price,
+    onSale,
+    updated: Date.now(),
+    storeUrl: sanitizeUrlString(`${BASE_URL}${item.storeUrl}`),
+  };
 };
 
 export async function findByISBN(isbn: string) {
