@@ -7,3 +7,5 @@ export interface SearchResult {
   updated?: number | Date;
   onSale?: boolean;
 }
+
+export const UNKNOWN_PRICE = -42;

@@ -4,7 +4,7 @@ import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { differenceInHours } from "../deps/date_fns.ts";
 
 import { Book } from "../models/book.ts";
-import { SearchResult } from "../models/searchResult.ts";
+import { SearchResult, UNKNOWN_PRICE } from "../models/searchResult.ts";
 
 export type StoreRecord = SearchResult & Book;
 
@@ -99,7 +99,7 @@ export function allBooks(store = getStore()) {
 }
 
 export function unpricedBooks(store: Store<StoreRecord>) {
-  return store.all((b) => !b.price);
+  return store.all((b) => !b.price || b.price === UNKNOWN_PRICE);
 }
 
 export function lastestUnpricedBooks(store: Store<StoreRecord>): StoreRecord[] {

@@ -1,13 +1,20 @@
 import puppeteer from "https://deno.land/x/puppeteer@9.0.1/mod.ts";
-import { SearchResult } from "../models/searchResult.ts";
+import { SearchResult, UNKNOWN_PRICE } from "../models/searchResult.ts";
 import { parse } from "https://deno.land/x/cashify@v2.5.0/mod.ts";
 import { sanitizeUrlString } from "../utils/url.ts";
+
 const RESULT_SECTION_SELECTOR = "span[class*=SEARCH_RESULTS]";
 
 const BASE_URL = "https://www.amazon.ca";
 
+const getPrice = (priceStr: string | undefined) => {
+  if (!priceStr || priceStr === "") {
+    return UNKNOWN_PRICE;
+  }
+  return parse(priceStr).amount;
+};
 export const buildSearchResult = (item: Partial<SearchResult>) => {
-  const price = parse(item.priceStr || "0").amount;
+  const price = getPrice(item.priceStr);
   const onSale = price > 0 && price <= 3.99;
   return {
     ...item,

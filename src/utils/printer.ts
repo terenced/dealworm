@@ -4,7 +4,7 @@ import { chalkin } from "../deps/chalkin.ts";
 import { formatDistanceToNow } from "../deps/date_fns.ts";
 
 import { StoreRecord } from "../services/store.ts";
-
+import { UNKNOWN_PRICE } from "../models/searchResult.ts";
 const formatUrls = (record: StoreRecord) => {
   if (record.url && record.storeUrl) {
     return [record.url, record.storeUrl].map((url) => chalkin.cyan.dim(url))
@@ -16,8 +16,9 @@ const formatUrls = (record: StoreRecord) => {
 };
 
 const formatPrice = (record: StoreRecord) => {
-  if (!record?.price) {
-    return "";
+  if (!record?.price) return "";
+  if (record.price === UNKNOWN_PRICE) {
+    return chalkin.dim.italic.strikethrough("Unknown");
   }
   const priceStr = record.price.toLocaleString("en-CA", {
     style: "currency",
