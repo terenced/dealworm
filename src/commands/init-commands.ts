@@ -7,12 +7,12 @@ import { syncCommand } from "./sync.ts";
 export function initCommands(): Command {
   const program = new Command()
     .name("dealworm")
-    .option("--debug [boolean:boolean]", "Display debug logs", {
+    .option("--debug [type:boolean]", "Display debug logs", {
       default: false,
       global: true,
     })
     .option(
-      "--verbose [boolean:boolean]",
+      "--verbose [type:boolean]",
       "Display underlying individual cloud CLI commands",
       {
         default: false,
