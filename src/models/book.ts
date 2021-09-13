@@ -7,6 +7,4 @@ export interface Book {
   url: string;
   price?: number;
   created?: number;
-  updated?: number;
-  // storeUrl?: string;
 }

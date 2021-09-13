@@ -13,7 +13,6 @@ export const buildSearchResult = (item: Partial<SearchResult>) => {
     ...item,
     price,
     onSale,
-    updated: Date.now(),
     storeUrl: sanitizeUrlString(`${BASE_URL}${item.storeUrl}`),
   };
 };

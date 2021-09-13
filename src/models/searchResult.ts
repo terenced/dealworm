@@ -4,6 +4,6 @@ export interface SearchResult {
   priceStr?: string;
   storeUrl?: string;
   storeImg?: string;
-  updated?: number;
+  updated?: number | Date;
   onSale?: boolean;
 }

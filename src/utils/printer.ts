@@ -30,7 +30,7 @@ const formatPrice = (record: StoreRecord) => {
   return chalkin.yellow.dim(priceStr);
 };
 
-const formatUpdated = (updated?: number) =>
+const formatUpdated = (updated?: number | string | Date) =>
   updated
     ? chalkin.white.italic(
       formatDistanceToNow(new Date(updated), { addSuffix: true }),
@@ -38,6 +38,7 @@ const formatUpdated = (updated?: number) =>
     : "";
 
 export function printRecords(records: StoreRecord[]) {
+  const showBorder = records.length > 1;
   const body = records.map(
     (
       b,
@@ -49,5 +50,9 @@ export function printRecords(records: StoreRecord[]) {
       formatUrls(b),
     ] as IRow<ICell>),
   );
-  new Table().body(body).border(true).render();
+  new Table().body(body).border(showBorder).render();
+}
+
+export function printRecordsRaw(records: StoreRecord[]) {
+  records.forEach((r) => console.log(r));
 }
