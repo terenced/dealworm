@@ -16,7 +16,7 @@ import {
   unpricedBooks,
 } from "./store.ts";
 
-import { differenceInHours } from "../deps/date_fns.ts";
+// import { differenceInHours } from "../deps/date_fns.ts";
 import { subHours } from "../deps/date_fns.ts";
 
 const fakeBook = (overrides: Partial<StoreRecord> = {}) => {
@@ -71,8 +71,8 @@ describe("get functions", () => {
 
     beforeEach(() => {
       otherStore = getStore(false);
-      const sixHoursAgo = subHours(Date.now(), 7).toString();
-      const twoHoursAgo = subHours(Date.now(), 2).toString();
+      const sixHoursAgo = subHours(Date.now(), 7);
+      const twoHoursAgo = subHours(Date.now(), 2);
       older = [fakeBook({ updated: sixHoursAgo })];
       yonger = [fakeBook({ updated: twoHoursAgo })];
       all = [...older, ...yonger];
