@@ -3,6 +3,8 @@ import { getGoodReadsUrlFromDescription } from "../utils/url.ts";
 import { GoodReadsFeedEntry } from "./goodreads.ts";
 import { Book } from "./book.ts";
 
+import isbn3 from "https://cdn.skypack.dev/isbn3";
+
 const imgPlaceholder = "https://via.placeholder.com/250x350.png?text=Missing";
 
 const getImageUrl = (
@@ -17,7 +19,7 @@ const getImageUrl = (
 
 export function toBook(entry: GoodReadsFeedEntry): Book {
   return {
-    isbn: entry?.isbn?.value || "",
+    isbn: isbn3.asIsbn13(entry?.isbn?.value || ""),
     description: stripHtml(entry?.book_description?.value || "")?.result,
     imageUrl: getImageUrl(entry),
     published: entry?.published || "",
