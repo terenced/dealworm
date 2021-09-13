@@ -3,9 +3,10 @@ import { ICell, IRow, Table } from "../deps/table.ts";
 import { chalkin } from "../deps/chalkin.ts";
 import { formatDistanceToNow } from "../deps/date_fns.ts";
 
-import { StoreRecord } from "../services/store.ts";
+import { Book } from "../models/book.ts";
 import { UNKNOWN_PRICE } from "../models/searchResult.ts";
-const formatUrls = (record: StoreRecord) => {
+
+const formatUrls = (record: Book) => {
   if (record.url && record.storeUrl) {
     return [record.url, record.storeUrl].map((url) => chalkin.cyan.dim(url))
       .join(
@@ -15,7 +16,7 @@ const formatUrls = (record: StoreRecord) => {
   return chalkin.cyan.dim(record.url ?? record.storeUrl);
 };
 
-const formatPrice = (record: StoreRecord) => {
+const formatPrice = (record: Book) => {
   if (!record?.price) return "";
   if (record.price === UNKNOWN_PRICE) {
     return chalkin.dim.italic.strikethrough("Unknown");
@@ -38,7 +39,7 @@ const formatUpdated = (updated?: number | string | Date) =>
     )
     : "";
 
-export function printRecords(records: StoreRecord[]) {
+export function printRecords(records: Book[]) {
   const showBorder = records.length > 1;
   const body = records.map(
     (
@@ -54,6 +55,6 @@ export function printRecords(records: StoreRecord[]) {
   new Table().body(body).border(showBorder).render();
 }
 
-export function printRecordsRaw(records: StoreRecord[]) {
+export function printRecordsRaw(records: Book[]) {
   records.forEach((r) => console.log(r));
 }

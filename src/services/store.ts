@@ -4,9 +4,7 @@ import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { differenceInHours } from "../deps/date_fns.ts";
 
 import { Book } from "../models/book.ts";
-import { SearchResult, UNKNOWN_PRICE } from "../models/searchResult.ts";
-
-export type StoreRecord = SearchResult & Book;
+import { UNKNOWN_PRICE } from "../models/searchResult.ts";
 
 interface KeyValue<T> {
   [key: string]: T;
@@ -91,18 +89,18 @@ export class Store<T> {
 }
 
 export function getStore(persisted = true) {
-  return new Store<StoreRecord>({ name: "books", persisted });
+  return new Store<Book>({ name: "books", persisted });
 }
 
 export function allBooks(store = getStore()) {
   return store.all();
 }
 
-export function unpricedBooks(store: Store<StoreRecord>) {
+export function unpricedBooks(store: Store<Book>) {
   return store.all((b) => !b.price || b.price === UNKNOWN_PRICE);
 }
 
-export function lastestUnpricedBooks(store: Store<StoreRecord>): StoreRecord[] {
+export function lastestUnpricedBooks(store: Store<Book>): Book[] {
   return unpricedBooks(store)
     .filter((book) => !book.updated || isOld(book.updated));
 }
@@ -112,18 +110,20 @@ const hoursFromNow = (date?: number | Date) =>
 
 const isOld = (date?: number | Date) => hoursFromNow(date) > 6;
 
-const updatedCompare = (a: StoreRecord, b: StoreRecord) => {
+const updatedCompare = (a: Book, b: Book) => {
   if (!a.updated) return true;
   if (!b.updated) return false;
   if (hoursFromNow(a.updated) >= hoursFromNow(b.updated)) return true;
   return a.updated >= b.updated;
 };
 
-const updatedSort = Fae.comparator(updatedCompare);
+const sortByUpdated = (items: Book[]) =>
+  Fae.sort(Fae.comparator(updatedCompare), items);
+
 export function orderedUnpricedBooks(store = getStore()) {
-  return Fae.sort(updatedSort, unpricedBooks(store));
+  return sortByUpdated(unpricedBooks(store));
 }
 
-export function pricedBooks(store: Store<StoreRecord>) {
+export function pricedBooks(store: Store<Book>) {
   return store.all((b) => Boolean(b.price));
 }

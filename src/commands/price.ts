@@ -4,11 +4,8 @@ import { Command } from "../deps/cliffy.ts";
 import * as Fae from "../deps/fae.ts";
 import { wait } from "../deps/wait.ts";
 
-import {
-  getStore,
-  orderedUnpricedBooks,
-  StoreRecord,
-} from "../services/store.ts";
+import { Book } from "../models/book.ts";
+import { getStore, orderedUnpricedBooks } from "../services/store.ts";
 import { findByISBN } from "../services/amazon.ts";
 import { getLogger } from "../utils/logger.ts";
 
@@ -57,7 +54,7 @@ async function priceBooks(
         ...book,
         ...am,
         updated: Date.now(),
-      } as StoreRecord;
+      } as Book;
       logger.info(`${bookInfoText}: Found ${am.price}`);
       if (spinner) spinner.text = `Found ${am.price}`;
       store.updateAndCommit(book.isbn, priced);

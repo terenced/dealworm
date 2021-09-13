@@ -12,14 +12,13 @@ import {
   lastestUnpricedBooks,
   pricedBooks,
   Store,
-  StoreRecord,
   unpricedBooks,
 } from "./store.ts";
 
-// import { differenceInHours } from "../deps/date_fns.ts";
+import { Book } from "../models/book.ts";
 import { subHours } from "../deps/date_fns.ts";
 
-const fakeBook = (overrides: Partial<StoreRecord> = {}) => {
+const fakeBook = (overrides: Partial<Book> = {}) => {
   return {
     isbn: faker.random.uuid(),
     "description": faker.lorem.sentence(),
@@ -28,14 +27,14 @@ const fakeBook = (overrides: Partial<StoreRecord> = {}) => {
     "title": faker.lorem.sentence(),
     "url": faker.internet.url(),
     ...overrides,
-  } as StoreRecord;
+  } as Book;
 };
 
 describe("get functions", () => {
-  let priced: StoreRecord[];
-  let unpriced: StoreRecord[];
-  let allBooks: StoreRecord[];
-  let store: Store<StoreRecord>;
+  let priced: Book[];
+  let unpriced: Book[];
+  let allBooks: Book[];
+  let store: Store<Book>;
 
   beforeEach(() => {
     priced = Array.from({ length: 5 }).map(() =>
@@ -64,10 +63,10 @@ describe("get functions", () => {
   });
 
   describe("lastestUnpricedBooks", () => {
-    let older: StoreRecord[];
-    let yonger: StoreRecord[];
-    let all: StoreRecord[];
-    let otherStore: Store<StoreRecord>;
+    let older: Book[];
+    let yonger: Book[];
+    let all: Book[];
+    let otherStore: Store<Book>;
 
     beforeEach(() => {
       otherStore = getStore(false);

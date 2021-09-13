@@ -7,9 +7,9 @@ import {
   getStore,
   orderedUnpricedBooks,
   pricedBooks,
-  StoreRecord,
 } from "../services/store.ts";
 
+import { Book } from "../models/book.ts";
 import { printRecords, printRecordsRaw } from "../utils/printer.ts";
 
 export const listCommand = new Command()
@@ -20,7 +20,7 @@ export const listCommand = new Command()
   .option("-r, --raw [type:boolean]", "Print raw values")
   .action(({ prices, unpriced, limit, isbn, raw }) => {
     const store = getStore();
-    let items: StoreRecord[];
+    let items: Book[];
     const printFn = raw ? printRecordsRaw : printRecords;
 
     if (isbn) {

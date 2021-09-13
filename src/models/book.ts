@@ -1,4 +1,6 @@
-export interface Book {
+import { SearchResult } from "./searchResult.ts";
+
+export interface BaseBook {
   title: string;
   imageUrl: string;
   description: string;
@@ -8,3 +10,4 @@ export interface Book {
   price?: number;
   created?: number;
 }
+export type Book = SearchResult & BaseBook;
