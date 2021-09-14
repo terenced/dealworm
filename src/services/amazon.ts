@@ -7,6 +7,9 @@ const RESULT_SECTION_SELECTOR = "span[class*=SEARCH_RESULTS]";
 
 const BASE_URL = "https://www.amazon.ca";
 
+export const getAmazonSearchUrl = (isbn: string): string =>
+  `${BASE_URL}/s?k=${isbn}&i=stripbooks`;
+
 const getPrice = (priceStr: string | undefined) => {
   if (!priceStr || priceStr === "") {
     return UNKNOWN_PRICE;
@@ -25,8 +28,7 @@ export const buildSearchResult = (item: Partial<SearchResult>) => {
 };
 
 export async function findByISBN(isbn: string) {
-  // TODO: Move to config?
-  const searchUrl = `${BASE_URL}/s?k=${isbn}&i=stripbooks`;
+  const searchUrl = getAmazonSearchUrl(isbn);
   const browser = await puppeteer.launch({
     headless: Deno.env.get("DEBUG") !== "1",
     product: "firefox",

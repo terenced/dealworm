@@ -3,6 +3,7 @@ import { destoryCommand } from "./destory.ts";
 import { listCommand } from "./list.ts";
 import { priceCommand } from "./price.ts";
 import { syncCommand } from "./sync.ts";
+import { redditCommand } from "./reddit.ts";
 
 export function initCommands(): Command {
   const program = new Command()
@@ -23,5 +24,6 @@ export function initCommands(): Command {
   program.command("list", listCommand);
   program.command("price", priceCommand);
   program.command("sync", syncCommand);
+  program.command("reddit", redditCommand);
   return program;
 }

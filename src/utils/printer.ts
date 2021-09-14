@@ -6,7 +6,7 @@ import { formatDistanceToNow } from "../deps/date_fns.ts";
 import { Book } from "../models/book.ts";
 import { UNKNOWN_PRICE } from "../models/searchResult.ts";
 
-const formatUrls = (record: Book) => {
+const formatUrls = (record: Partial<Book>) => {
   if (record.url && record.storeUrl) {
     return [record.url, record.storeUrl].map((url) => chalkin.cyan.dim(url))
       .join(
@@ -16,7 +16,7 @@ const formatUrls = (record: Book) => {
   return chalkin.cyan.dim(record.url ?? record.storeUrl);
 };
 
-const formatPrice = (record: Book) => {
+const formatPrice = (record: Partial<Book>) => {
   if (!record?.price) return "";
   if (record.price === UNKNOWN_PRICE) {
     return chalkin.dim.italic.strikethrough("Unknown");
@@ -39,7 +39,7 @@ const formatUpdated = (updated?: number | string | Date) =>
     )
     : "";
 
-export function printRecords(records: Book[]) {
+export function printRecords(records: Partial<Book>[]) {
   const showBorder = records.length > 1;
   const body = records.map(
     (
