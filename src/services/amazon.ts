@@ -44,34 +44,52 @@ export async function findByISBN(isbn: string) {
 
     if (Deno.env.get("DEBUG")) {
       // @ts-ignore
-      page.on("console", (msg) => console.log("PAGE LOG:", msg._text));
+      page.on("console", (msg) => console.log("PAGE >>>", msg._text));
     }
-    const products = (
+
+    const product = (
       await page.evaluate(() => {
-        return Array.from(
-          // @ts-ignore
-          document.querySelectorAll("span[class*=SEARCH_RESULTS]"),
-          // @ts-ignore
-        ).map((item: Element) => {
-          const kindleItem = item.querySelector(
-            'a.a-size-base.a-link-normal.a-text-normal[href*="ebook"]',
-          );
-          return {
-            storeName: item.querySelector("h2")?.innerText,
-            priceStr: kindleItem?.querySelector(
-              '.a-link-normal.a-text-normal > span[class="a-price"] > span[class="a-offscreen"]',
-            )?.textContent || "",
-            storeUrl: kindleItem?.getAttribute("href") || "",
-            storeImg: item.querySelector(".s-image")?.getAttribute("src") || "",
-          };
-        });
+        // [...document.querySelectorAll('div.a-row.a-size-base.a-color-secondary > span')].map(r=> r.textContent).filter(r => r.startsWith('Or')).pop()
+        const getPrice = (elm: any | null) => {
+          return elm?.querySelector(
+            '.a-link-normal.a-text-normal > span[class="a-price"] > span[class="a-offscreen"]',
+          )?.textContent || "";
+        };
+        // @ts-ignore
+        const item = document.querySelector("span[class*=SEARCH_RESULTS]");
+        const kindleItem = item.querySelector(
+          'a.a-size-base.a-link-normal.a-text-normal[href*="ebook"]',
+        );
+        let price = getPrice(kindleItem);
+        console.log("price", price);
+        console.log("ki", kindleItem?.textContent);
+        if (price === "$0.00") {
+          // This might because the book is part of Kindle Unlimited.
+          // Need to look deeper
+          price = [
+            // @ts-ignore
+            ...document.querySelectorAll(
+              "div.a-row.a-size-base.a-color-secondary > span",
+            ),
+          ].filter((r) => r.textContent.startsWith("Or"))
+            .map((i) => i?.textContent?.match(/\$\d*\.\d*/)?.pop())
+            .pop();
+
+          console.log("new price", price);
+        }
+        return {
+          storeName: item.querySelector("h2")?.innerText,
+          priceStr: price,
+          storeUrl: kindleItem?.getAttribute("href") || "",
+          storeImg: item.querySelector(".s-image")?.getAttribute("src") || "",
+        };
       })
-    ).map(buildSearchResult).filter((p) => p);
+    );
 
     await page.close();
     await browser.close();
 
-    return products[0];
+    return buildSearchResult(product);
   } catch (error) {
     await browser.close();
     throw error;
