@@ -37,7 +37,11 @@ async function priceBooks(
   const spinner = verbose ? undefined : wait("Loading data");
   const store = getStore();
   const logger = getLogger(verbose);
-  const items = isbn ? [store.get(isbn)] : orderedUnpricedBooks(store);
+  const items = isbn
+    ? [store.get(isbn)]
+    : all
+    ? store.all()
+    : orderedUnpricedBooks(store);
   limit = (all || isbn) ? items.length : limit;
   const books = Fae.take(limit, items);
 
