@@ -8,9 +8,9 @@ import {
   LogLevel,
   LogLevelDisplay,
   TimePrefix,
-} from "../deps/houston.ts";
+} from "houston";
 
-import { join } from "https://deno.land/std/path/mod.ts";
+import { join } from "path/mod.ts";
 
 const config = {
   format: Format.text,

@@ -1,5 +1,5 @@
-import { Command } from "./deps/cliffy.ts";
-import { chalkin } from "./deps/chalkin.ts";
+import { Command } from "cliffy/mod.ts";
+import { default as chalkin } from "chalkin";
 import { initCommands } from "./commands/init-commands.ts";
 
 import "https://deno.land/x/dotenv@v3.0.0/load.ts";

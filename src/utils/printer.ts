@@ -1,7 +1,7 @@
-import { ICell, IRow, Table } from "../deps/table.ts";
+import { ICell, IRow, Table } from "cliffy/table/mod.ts";
 
-import { chalkin } from "../deps/chalkin.ts";
-import { formatDistanceToNow } from "../deps/date_fns.ts";
+import { default as chalkin } from "chalkin";
+import formatDistanceToNow from "date_fns/formatDistanceToNow";
 
 import { Book } from "../models/book.ts";
 import { UNKNOWN_PRICE } from "../models/searchResult.ts";

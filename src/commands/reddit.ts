@@ -1,8 +1,8 @@
-import { Command } from "../deps/cliffy.ts";
+import { Command } from "cliffy/mod.ts";
 
-import { printRecords } from "../utils/printer.ts";
-import { Deal, getDeals } from "../services/reddit.ts";
-import { OpenLibBook, searchBookDetails } from "../services/open-library.ts";
+import { printRecords } from "src/utils/printer.ts";
+import { getDeals } from "src/services/reddit.ts";
+import { OpenLibBook, searchBookDetails } from "src/services/open-library.ts";
 
 export const redditCommand = new Command()
   .action(async () => {
@@ -13,13 +13,16 @@ export const redditCommand = new Command()
       if (!deal.title) {
         continue;
       }
-      console.log(deal.text);
       const details = await searchBookDetails(deal.title, deal.author);
       items.push({
         ...deal,
         ...details,
         priceStr: deal.text.match(/\$\d*\.\d*/),
       });
+    }
+    if (items.length === 0) {
+      console.log("No deals found :(");
+      return;
     }
     printRecords(items);
   });

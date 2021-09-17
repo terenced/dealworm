@@ -1,4 +1,4 @@
-import { Command } from "../deps/cliffy.ts";
+import { Command } from "cliffy/mod.ts";
 
-import { getStore } from "../services/store.ts";
+import { getStore } from "src/services/store.ts";
 export const destoryCommand = new Command().action(() => getStore().destory());

@@ -1,13 +1,13 @@
-import isbn3 from "https://cdn.skypack.dev/isbn3";
+import isbn3 from "isbn3";
 
-import { Command } from "../deps/cliffy.ts";
-import * as Fae from "../deps/fae.ts";
-import { wait } from "../deps/wait.ts";
+import { Command } from "cliffy/mod.ts";
+import * as Fae from "fae";
+import { wait } from "wait";
 
-import { Book } from "../models/book.ts";
-import { getStore, orderedUnpricedBooks } from "../services/store.ts";
-import { findByISBN } from "../services/amazon.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Book } from "src/models/book.ts";
+import { getStore, orderedUnpricedBooks } from "src/services/store.ts";
+import { findByISBN } from "src/services/amazon.ts";
+import { getLogger } from "src/utils/logger.ts";
 
 export const priceCommand = new Command()
   .option("-l, --limit [type:number]", "Limit to process", { default: 3 })

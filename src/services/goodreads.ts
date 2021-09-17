@@ -1,4 +1,4 @@
-import { parseFeed } from "https://deno.land/x/rss@0.5.3/mod.ts";
+import { parseFeed } from "rss";
 
 interface Value {
   value: string;

@@ -1,10 +1,10 @@
-import * as Fae from "https://deno.land/x/fae@v0.6.2/mod.ts";
-import { join } from "https://deno.land/std/path/mod.ts";
-import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import { differenceInHours } from "../deps/date_fns.ts";
+import * as Fae from "fae";
+import { join } from "path/mod.ts";
+import { existsSync } from "fs/mod.ts";
+import differenceInHours from "date_fns/differenceInHours";
 
-import { Book } from "../models/book.ts";
-import { UNKNOWN_PRICE } from "../models/searchResult.ts";
+import { Book } from "src/models/book.ts";
+import { UNKNOWN_PRICE } from "src/models/searchResult.ts";
 
 interface KeyValue<T> {
   [key: string]: T;
@@ -92,11 +92,11 @@ export function getStore(persisted = true) {
   return new Store<Book>({ name: "books", persisted });
 }
 
-export function allBooks(store = getStore()) {
+export function allBooks(store = getStore()): Book[] {
   return store.all();
 }
 
-export function unpricedBooks(store: Store<Book>) {
+export function unpricedBooks(store: Store<Book>): Book[] {
   return store.all((b) => !b.price || b.price === UNKNOWN_PRICE);
 }
 
@@ -120,10 +120,10 @@ const updatedCompare = (a: Book, b: Book) => {
 const sortByUpdated = (items: Book[]) =>
   Fae.sort(Fae.comparator(updatedCompare), items);
 
-export function orderedUnpricedBooks(store = getStore()) {
+export function orderedUnpricedBooks(store = getStore()): Book[] {
   return sortByUpdated(unpricedBooks(store));
 }
 
-export function pricedBooks(store: Store<Book>) {
+export function pricedBooks(store: Store<Book>): Book[] {
   return store.all((b) => Boolean(b.price));
 }

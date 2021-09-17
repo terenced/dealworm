@@ -1,16 +1,16 @@
-import { Command } from "../deps/cliffy.ts";
-import * as Fae from "../deps/fae.ts";
-import { chalkin } from "../deps/chalkin.ts";
+import { Command } from "cliffy/mod.ts";
+import { default as chalkin } from "chalkin";
+import * as Fae from "fae";
 
 import {
   allBooks,
   getStore,
   orderedUnpricedBooks,
   pricedBooks,
-} from "../services/store.ts";
+} from "src/services/store.ts";
 
-import { Book } from "../models/book.ts";
-import { printRecords, printRecordsRaw } from "../utils/printer.ts";
+import { Book } from "src/models/book.ts";
+import { printRecords, printRecordsRaw } from "src/utils/printer.ts";
 
 export const listCommand = new Command()
   .option("-p, --priced [type:boolean]", "All items with price")
@@ -42,7 +42,10 @@ export const listCommand = new Command()
       items = allBooks(store);
     }
     if (limit) {
-      items = Fae.take(limit, items);
+      items = Fae.take(
+        limit,
+        items,
+      ) as unknown as Book[];
     }
     printFn(items);
   });

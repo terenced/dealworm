@@ -1,9 +1,9 @@
-import { stripHtml } from "../deps/stripHtml.ts";
-import { getGoodReadsUrlFromDescription } from "../utils/url.ts";
+import { stripHtml } from "string-strip-html";
+import { getGoodReadsUrlFromDescription } from "src/utils/url.ts";
 import { GoodReadsFeedEntry } from "./goodreads.ts";
 import { Book } from "./book.ts";
 
-import isbn3 from "https://cdn.skypack.dev/isbn3";
+import isbn3 from "isbn3";
 
 const imgPlaceholder = "https://via.placeholder.com/250x350.png?text=Missing";
 

@@ -15,8 +15,8 @@ import {
   unpricedBooks,
 } from "./store.ts";
 
-import { Book } from "../models/book.ts";
-import { subHours } from "../deps/date_fns.ts";
+import { Book } from "src/models/book.ts";
+import subHours from "date_fns/subHours";
 
 const fakeBook = (overrides: Partial<Book> = {}) => {
   return {

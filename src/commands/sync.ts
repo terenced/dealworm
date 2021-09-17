@@ -1,11 +1,11 @@
-import { Command } from "../deps/cliffy.ts";
-import { chalkin } from "../deps/chalkin.ts";
+import { Command } from "cliffy/mod.ts";
+import { default as chalkin } from "chalkin";
 
 import { CmdGlobalOptions } from "./cmd-options.ts";
 
-import { getItemsFromFeed } from "../services/goodreads.ts";
-import { getStore } from "../services/store.ts";
-import { toBook } from "../models/mappers.ts";
+import { getItemsFromFeed } from "src/services/goodreads.ts";
+import { getStore } from "src/services/store.ts";
+import { toBook } from "src/models/mappers.ts";
 
 interface SyncCommandOptions extends CmdGlobalOptions {
   failed?: boolean;

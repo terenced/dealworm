@@ -1,4 +1,4 @@
-import { Command } from "../deps/cliffy.ts";
+import { Command } from "cliffy/mod.ts";
 import { destoryCommand } from "./destory.ts";
 import { listCommand } from "./list.ts";
 import { priceCommand } from "./price.ts";

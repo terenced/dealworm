@@ -1,7 +1,7 @@
-import Fuse from "https://deno.land/x/fuse@v6.0.4/dist/fuse.esm.min.js";
-import * as Fae from "../deps/fae.ts";
+import Fuse from "fuse";
+import * as Fae from "fae";
 
-import { Book } from "../models/book.ts";
+import { Book } from "src/models/book.ts";
 import { getAmazonSearchUrl } from "./amazon.ts";
 
 export interface OpenLibBook extends Partial<Book> {
