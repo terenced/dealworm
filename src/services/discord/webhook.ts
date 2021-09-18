@@ -1,8 +1,14 @@
 import MessageBuilder, { WebhookPayload } from "./message-builder.ts";
-type WebhookOptions = {
+export type WebhookOptions = {
   url: string;
   throwErrors?: boolean;
   retryOnLimit?: boolean;
+};
+
+export const createHook = () => {
+  const hookUrl = Deno.env.get("DISCORD_WEBHOOK");
+  if (!hookUrl) throw Error("No discord URL set");
+  return new Webhook(hookUrl);
 };
 
 export default class Webhook {
