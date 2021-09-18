@@ -1,3 +1,5 @@
+// Based off of https://github.com/LilSpoodermann/discord-ts-webhook/
+
 import MessageBuilder, { WebhookPayload } from "./message-builder.ts";
 export type WebhookOptions = {
   url: string;

@@ -1,3 +1,5 @@
+// Based off of https://github.com/LilSpoodermann/discord-ts-webhook/
+
 const formatColor = (color: string | number) => {
   if (typeof color === "string" && color.startsWith("#")) {
     const rawHex = color.split("#")[1];
