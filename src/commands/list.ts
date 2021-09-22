@@ -15,10 +15,12 @@ import { printRecords, printRecordsRaw } from "src/utils/printer.ts";
 export const listCommand = new Command()
   .option("-p, --priced [type:boolean]", "All items with price")
   .option("-u, --unpriced [type:boolean]", "All items missing prices")
+  .option("-o, --outdated [type:boolean]", "Outdated items")
+  .option("-c, --count [type:boolean]", "Display the count of items")
   .option("-l, --limit [type:number]", "Limit to process")
   .option("-i, --isbn [type:string]", "Find a specifc book by ISBN")
   .option("-r, --raw [type:boolean]", "Print raw values")
-  .action(({ prices, unpriced, limit, isbn, raw }) => {
+  .action(({ prices, unpriced, limit, isbn, raw, count }) => {
     const store = getStore();
     let items: Book[];
     const printFn = raw ? printRecordsRaw : printRecords;
@@ -47,5 +49,9 @@ export const listCommand = new Command()
         items,
       ) as unknown as Book[];
     }
-    printFn(items);
+    if (count) {
+      console.log(items.length);
+    } else {
+      printFn(items);
+    }
   });

@@ -15,9 +15,17 @@ export function initCommands(): Command {
     })
     .option(
       "--verbose [type:boolean]",
-      "Display underlying individual cloud CLI commands",
+      "Verbose logging to console",
       {
         default: false,
+        global: true,
+      },
+    )
+    .option(
+      "--silent [type:boolean]",
+      "Silence all output execpt direct print output (list cmd)",
+      {
+        default: true,
         global: true,
       },
     );

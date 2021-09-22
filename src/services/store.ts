@@ -100,6 +100,11 @@ export function unpricedBooks(store: Store<Book>): Book[] {
   return store.all((b) => !b.price || b.price === UNKNOWN_PRICE);
 }
 
+export function outdatedBooks(stroe: Store<Book>) {
+  return sortByUpdated(
+    allBooks().filter((b) => !b.updated || isOld(b.updated)),
+  );
+}
 export function lastestUnpricedBooks(store: Store<Book>): Book[] {
   return unpricedBooks(store)
     .filter((book) => !book.updated || isOld(book.updated));

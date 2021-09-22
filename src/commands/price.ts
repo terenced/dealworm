@@ -5,8 +5,8 @@ import * as Fae from "fae";
 import { wait } from "wait";
 
 import { Book } from "src/models/book.ts";
-import { getStore, orderedUnpricedBooks } from "src/services/store.ts";
-import { findByISBN } from "src/services/amazon.ts";
+import { getStore, outdatedBooks } from "src/services/store.ts";
+import { findByISBN, getAmazonSearchUrl } from "src/services/amazon.ts";
 import { getLogger } from "src/utils/logger.ts";
 
 export const priceCommand = new Command()
@@ -36,12 +36,12 @@ async function priceBooks(
 ) {
   const spinner = verbose ? undefined : wait("Loading data");
   const store = getStore();
-  const logger = getLogger(verbose);
+  const logger = await getLogger(verbose);
   const items = isbn
     ? [store.get(isbn)]
     : all
     ? store.all()
-    : orderedUnpricedBooks(store);
+    : outdatedBooks(store);
   limit = (all || isbn) ? items.length : limit;
   const books = Fae.take(limit, items);
 
@@ -51,7 +51,11 @@ async function priceBooks(
     if (!book) continue;
     const bookInfoText = `(${current++}/${limit}) ${book.isbn} ${book.title}`;
     if (spinner) spinner.text = `Pricing ${bookInfoText}`;
-    logger.info(`${bookInfoText}: Pricing`);
+    logger.info(`${book.isbn}: Pricing`, {
+      book,
+      url: getAmazonSearchUrl(book.isbn),
+    });
+    if (all) continue;
     try {
       const am = await findByISBN(book.isbn);
       const priced = {
@@ -59,12 +63,11 @@ async function priceBooks(
         ...am,
         updated: Date.now(),
       } as Book;
-      logger.info(`${bookInfoText}: Found ${am.price}`);
+      logger.info(`${book.isbn}: Found ${am.price}`, am);
       if (spinner) spinner.text = `Found ${am.price}`;
       store.updateAndCommit(book.isbn, priced);
     } catch (error) {
-      logger.info(`${bookInfoText}: encountered an error`);
-      logger.error(`${bookInfoText}: ${error}`);
+      logger.error(bookInfoText, { error });
       store.updateAndCommit(book.isbn, {
         ...book,
         updated: Date.now(),
